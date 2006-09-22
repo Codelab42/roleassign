@@ -1,6 +1,6 @@
 <?php
 
-/* $Id */
+/* $Id$ */
 
 /* Roleassign - a Drupal module that lets site administrators delegate
  * assignment of selected roles.
@@ -21,18 +21,21 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
-function roleassign_help($section="admin/help#roleassign")
-{
-	switch ($section)
-	{
-		case 'admin/modules#description':
-			return t('Lets site administrators delegate assignment of selected roles.');
-		case 'admin/help#roleassign':
-			return t(_roleassign_admin_help_roleassign());
-	}
-}
 
+if (!function_exists('array_intersect_key'))
+{
+	function array_intersect_key()
+	{
+		$arrs = func_get_args();
+		$result = array_shift($arrs);
+		foreach ($arrs as $array)
+			foreach ($result as $key => $v)
+				if (!array_key_exists($key, $array))
+					unset($result[$key]);
+		return $result;
+   }
+}
+ 
 function roleassign_perm()
 {
 	return array('assign roles');
@@ -103,7 +106,8 @@ function roleassign_form_alter($form_id, &$form)
 	
 	// Get roles already assigned to the user
 	// [TODO: Is there a more robust and elegant way?]
-	$assigned_roles = user_load(array('uid' => arg(1)))->roles;
+	$user = user_load(array('uid' => arg(1)));
+	$assigned_roles = $user->roles;
 	
 	// Get roles that are already assiged but not avaiable for
 	// reassignment, e.g. authenticated user.
@@ -124,7 +128,7 @@ function roleassign_form_alter($form_id, &$form)
 		'#default_value' => array_keys($assigned_roles),
 		'#description' => t('The user receives the combined permissions of all roles selected here and following roles: %roles.', array('%roles' => theme('placeholder', $protected_roles)))
 	);
-		
+
 }
 
 function roleassign_user($type, &$edit, &$user, $category = NULL)
@@ -148,6 +152,17 @@ function roleassign_user($type, &$edit, &$user, $category = NULL)
 	if ($type == 'submit') 
 		$edit['roles'] = array_filter((array)$edit['roleassign_roles']);
 	
+}
+
+function roleassign_help($section="admin/help#roleassign")
+{
+	switch ($section)
+	{
+		case 'admin/modules#description':
+			return t('Lets site administrators delegate assignment of selected roles.');
+		case 'admin/help#roleassign':
+			return t(_roleassign_admin_help_roleassign());
+	}
 }
 
 function _roleassign_admin_help_roleassign()
