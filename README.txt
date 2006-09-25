@@ -1,7 +1,7 @@
 DESCRIPTION
 ----------- 
 
-Roleassign lets site administrators delegate assignment of selected 
+Role Assign lets site administrators delegate assignment of selected 
 roles. 
 
 It is possible for site administrators to delegate the administration 
@@ -61,7 +61,7 @@ BUG REPORTS, FEATURE REQUESTS AND OTHER ISSUES
 
 This module is created and maintained by Thomas Barregren. 
 
-Please use the roleassign project page 
+Please use the Role Assign project page 
 <http://drupal.org/project/roleassign> for sending bug reports and 
 feature requests. For other issues, please send an e-mail directly to 
 Thomas Barregren <mailto:thomas@webbredaktoren.se>. 
@@ -72,12 +72,12 @@ LICENSE
 
 Roleasign version 1.0. Copyright (C) 2006 Thomas Barregren. 
 
-Roleassign is free software; you can redistribute it and/or modify it 
+Role Assign is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
 Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version. 
 
-Roleassign is distributed in the hope that it will be useful, but 
+Role Assign is distributed in the hope that it will be useful, but 
 WITHOUT ANY WARRANTY; without even the implied warranty of 
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General 
 Public License for more details. 

@@ -69,19 +69,24 @@ function roleassign_admin()
 	$roles = user_roles(TRUE);
 	unset($roles[DRUPAL_AUTHENTICATED_RID]);
 	
-	// If there is no other roles, it isn't much to do
-	if (!$roles)
-		return;
-	
-	// Create and return a system settings form
-	$form['roleassign_roles'] = array
-	(
-		'#type' => 'checkboxes',
-		'#title' => t('Roles'),
-		'#options' => $roles,
-		'#default_value' => variable_get('roleassign_roles',  array()),
-		'#description' => t('Select roles that are available for assignment.')
-	);
+	// Show checkboxes with roles that can be delegated if any.
+	if ($roles)	
+		$form['roleassign_roles'] = array
+		(
+			'#type' => 'checkboxes',
+			'#title' => t('Roles'),
+			'#options' => $roles,
+			'#default_value' => variable_get('roleassign_roles',  array()),
+			'#description' => t('Select roles that are available for assignment.')
+		);
+	else
+		 $form['roleassign_roles'] = array
+		 (
+			'#type' => 'markup',
+			'#value' => '<p>No assignable roles avaiable. You have to <a href="/admin/access/roles">add roles</a> that can be assigned.</p>'
+		);
+
+	// Return system settings form
 	return system_settings_form('roleassign_admin', $form);
 
 }
@@ -89,6 +94,7 @@ function roleassign_admin()
 function roleassign_form_alter($form_id, &$form)
 {
 	
+	// Do nothing if not the user_edit form
 	if ($form_id != 'user_edit')
 		return;
 
@@ -105,7 +111,6 @@ function roleassign_form_alter($form_id, &$form)
 	$assignable_roles = array_intersect_key($roles, $assignable_roles);
 	
 	// Get roles already assigned to the user
-	// [TODO: Is there a more robust and elegant way?]
 	$user = user_load(array('uid' => arg(1)));
 	$assigned_roles = $user->roles;
 	
@@ -160,16 +165,25 @@ function roleassign_help($section="admin/help#roleassign")
 	{
 		case 'admin/modules#description':
 			return t('Lets site administrators delegate assignment of selected roles.');
+		case 'admin/access/roleassign':
+			return t(_roleassign_settings_help());
 		case 'admin/help#roleassign':
-			return t(_roleassign_admin_help_roleassign());
+			return t(_roleassign_help_help());
 	}
 }
 
-function _roleassign_admin_help_roleassign()
+function _roleassign_settings_help()
+{
+	return <<<EOT
+<p>Users with both <code>administer users</code> and <code>assign roles</code> permissions are allowed to assign the roles selected below. For more information, <a href="/admin/help/roleassign">read this</a>.</p>
+EOT;
+}
+
+function _roleassign_help_help()
 {
 	return <<<EOT
 <h2>Description</h2>
-<p>Roleassign lets site administrators delegate assignment of selected roles.</p>
+<p>Role Assign lets site administrators delegate assignment of selected roles.</p>
 <p>It is possible for site administrators to delegate the administration through the <code>administer users</code> permission. But the <code>administer users</code> permission doesn't include the right to assign roles to the user. That is necessary if the delegatee should be able to administrate the user accounts without intervention from a site administrator.</p>
 <p>To delegate the assignment of roles, site administrators have had until now no other choice than also grant the <code>administer access control</code> permission. But that is not advisable. The <code>administer access control</code> permission is very far-reaching, giving rights to access all roles, and worse, to grant any rights to any role. That can be abused by the delegatee, who can assign himself all rights and thereby take control over the site.</p>
 <p>This module solves this dilemma by introducing the <code>assign roles</code> permission. While editing a user's account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by the site administrator.</p>
@@ -193,9 +207,9 @@ function _roleassign_admin_help_roleassign()
 <p>Please use the <a href="http://drupal.org/project/roleassign">roleassign project page</a> for sending <a href="http://drupal.org/node/add/project_issue/roleassign/bug">bug reports</a> and <a href="http://drupal.org/node/add/project_issue/roleassign/feature">feature requests</a>. For other issues, please send an e-mail directly to <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>
 
 <h2>License</h2>
-<p>Roleasign version 1.0. Copyright &copy; 2006 <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>
-<p>Roleassign is free software; you can redistribute it and/or modify it under the terms of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
-<p>Roleassign is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> for more details.</p>
+<p>Role Assign copyright &copy; 2006 <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>
+<p>Role Assign is free software; you can redistribute it and/or modify it under the terms of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
+<p>Role Assign is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> for more details.</p>
 <p>You should have received a copy of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.</p>
 EOT;
 }
