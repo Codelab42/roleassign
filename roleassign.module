@@ -48,7 +48,7 @@ function roleassign_menu($may_cache)
 	{
 		$items[] = array('path' => 'admin/access/roleassign', 
 		'title' => t('role assign'),
-		'callback' => 'roleassign_admin_setttings',
+		'callback' => 'roleassign_admin_settings',
 		'type' => MENU_LOCAL_TASK,
 		'weight' => 1,
 		'access' => user_access('administer access control'));
@@ -56,7 +56,7 @@ function roleassign_menu($may_cache)
 	return $items;
 }
 
-function roleassign_admin_setttings()
+function roleassign_admin_settings()
 {
 
 	// To admister roleassign, user must have been authorized
@@ -82,7 +82,7 @@ function roleassign_admin_setttings()
 		'#default_value' => variable_get('roleassign_roles',  array()),
 		'#description' => t('Select roles that are available for assignment.')
 	);
-	return system_settings_form('roleassign_admin_setttings', $form);
+	return system_settings_form('roleassign_admin_settings', $form);
 
 }
 
