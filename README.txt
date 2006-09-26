@@ -68,9 +68,9 @@ Thomas Barregren <mailto:thomas@webbredaktoren.se>.
 
 
 LICENSE
-------- 
+-------
 
-Roleasign version 1.0. Copyright (C) 2006 Thomas Barregren. 
+Roleasign $Revision$: Copyright (C) $Date$ Thomas Barregren. 
 
 Role Assign is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 

@@ -1,5 +1,3 @@
-<?php
-
 /* $Id$ */
 
 /* Roleassign - a Drupal module that lets site administrators delegate
@@ -175,41 +173,45 @@ function roleassign_help($section="admin/help#roleassign")
 function _roleassign_settings_help()
 {
 	return <<<EOT
-<p>Users with both <code>administer users</code> and <code>assign roles</code> permissions are allowed to assign the roles selected below. For more information, <a href="/admin/help/roleassign">read this</a>.</p>
+		<p>Users with both <code>administer users</code> and <code>assign roles</code> permissions are allowed to assign the roles selected below. For more information, <a href="/admin/help/roleassign">read this</a>.</p>
 EOT;
 }
 
 function _roleassign_help_help()
 {
-	return <<<EOT
-<h2>Description</h2>
-<p>Role Assign lets site administrators delegate assignment of selected roles.</p>
-<p>It is possible for site administrators to delegate the administration through the <code>administer users</code> permission. But the <code>administer users</code> permission doesn't include the right to assign roles to the user. That is necessary if the delegatee should be able to administrate the user accounts without intervention from a site administrator.</p>
-<p>To delegate the assignment of roles, site administrators have had until now no other choice than also grant the <code>administer access control</code> permission. But that is not advisable. The <code>administer access control</code> permission is very far-reaching, giving rights to access all roles, and worse, to grant any rights to any role. That can be abused by the delegatee, who can assign himself all rights and thereby take control over the site.</p>
-<p>This module solves this dilemma by introducing the <code>assign roles</code> permission. While editing a user's account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by the site administrator.</p>
-<p>This module is sponsored by <a href="http://www.webbredaktoren.se/">Webbredaktoren</a>.</p>
+	$version = str_replace(array('$Re'.'vision:', ' $'), array('', ''), '$Revision$');
+	$year = substr('$Date$', 7, 4);
+	$help = <<<EOT
+		<p>Role Assign lets site administrators delegate assignment of selected roles.</p>
+		<p>It is possible for site administrators to delegate the administration through the <code>administer users</code> permission. But the <code>administer users</code> permission doesn't include the right to assign roles to the user. That is necessary if the delegatee should be able to administrate the user accounts without intervention from a site administrator.</p>
+		<p>To delegate the assignment of roles, site administrators have had until now no other choice than also grant the <code>administer access control</code> permission. But that is not advisable. The <code>administer access control</code> permission is very far-reaching, giving rights to access all roles, and worse, to grant any rights to any role. That can be abused by the delegatee, who can assign himself all rights and thereby take control over the site.</p>
+		<p>This module solves this dilemma by introducing the <code>assign roles</code> permission. While editing a user's account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by the site administrator.</p>
+		<p>This module is sponsored by <a href="http://www.webbredaktoren.se/">Webbredaktoren</a>.</p>
 
-<h2>Configuration</h2>
-<ol>
-<li>Go to <code>administer > access control</code>. Under the permissions tab, grant <code>assign roles</code> permission to those roles that should be able to assign roles to other users. Notice that besides the <code>assign roles</code> permission, these roles also must have the <code>administer users</code> permission.</li>
-<li>Go to <code>administer > access control</code>. Under the role assign tab, select those roles that should be available for assignment by users with <code>assign roles</code> permission.</li>
-<li>Go to <code>administer > users</code>. For each user that should be able to assign roles, click on the corresponding <code>edit</code> link, and assign the user a role with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>
-</ol>
+		<h2>Configuration</h2>
+		<ol>
+		<li>Go to <code>administer > access control</code>. Under the permissions tab, grant <code>assign roles</code> permission to those roles that should be able to assign roles to other users. Notice that besides the <code>assign roles</code> permission, these roles also must have the <code>administer users</code> permission.</li>
+		<li>Go to <code>administer > access control</code>. Under the role assign tab, select those roles that should be available for assignment by users with <code>assign roles</code> permission.</li>
+		<li>Go to <code>administer > users</code>. For each user that should be able to assign roles, click on the corresponding <code>edit</code> link, and assign the user a role with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>
+		</ol>
 
-<h2>Usage</h2>
-<ol>
-<li>Log in as a user with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>
-<li>To change the roles of a user, go to <code>administer > users</code> and click on the user's <code>edit</code> link. Review the assignable roles and change the as necessary.</li>
-</ol>
+		<h2>Usage</h2>
+		<ol>
+		<li>Log in as a user with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>
+		<li>To change the roles of a user, go to <code>administer > users</code> and click on the user's <code>edit</code> link. Review the assignable roles and change the as necessary.</li>
+		</ol>
 
-<h2>Bug reports, feature requests and other issues</h2>
-<p>This module is created and maintained by <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>
-<p>Please use the <a href="http://drupal.org/project/roleassign">roleassign project page</a> for sending <a href="http://drupal.org/node/add/project_issue/roleassign/bug">bug reports</a> and <a href="http://drupal.org/node/add/project_issue/roleassign/feature">feature requests</a>. For other issues, please send an e-mail directly to <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>
+		<h2>Bug reports, feature requests and other issues</h2>
+		<p>This module is created and maintained by <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>
+		<p>Please use the <a href="http://drupal.org/project/roleassign">roleassign project page</a> for sending <a href="http://drupal.org/node/add/project_issue/roleassign/bug">bug reports</a> and <a href="http://drupal.org/node/add/project_issue/roleassign/feature">feature requests</a>. For other issues, please send an e-mail directly to <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>
 
-<h2>License</h2>
-<p>Role Assign copyright &copy; 2006 <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>
-<p>Role Assign is free software; you can redistribute it and/or modify it under the terms of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
-<p>Role Assign is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> for more details.</p>
-<p>You should have received a copy of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.</p>
+		<h2>License</h2>
 EOT;
+	$help .= '<p>Role Assign revision '.$version.': Copyright &copy; '.$year.' <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>';
+	$help .= <<<EOT
+		<p>Role Assign is free software; you can redistribute it and/or modify it under the terms of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
+		<p>Role Assign is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> for more details.</p>
+		<p>You should have received a copy of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.</p>
+EOT;
+	return $help;
 }
