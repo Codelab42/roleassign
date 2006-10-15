@@ -245,7 +245,7 @@ function _roleassign_help_help()
 	$year = substr('$Date$', 7, 4);
 	$help = <<<EOT
 		<p>RoleAssign introduce the <code>assign roles</code> permission. While editing a user's account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by the site administrator.</p>
-		<p><strong>Please always use this projects <a href="http://drupal.org/project/issues/roleassign" rel="nofollow">issue tracker</a> to report bugs or to request features or support.</strong></p>
+		<p><strong>Please always use this project's <a href="http://drupal.org/project/issues/roleassign" rel="nofollow">issue tracker</a> to report bugs or to request features or support.</strong></p>
 		<p>This module is sponsored by <a href="http://www.webbredaktoren.se/">Webbredaktören</a>.</p>
 		<!--break-->
 		<h2>Background</h2>

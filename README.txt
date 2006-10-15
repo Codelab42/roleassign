@@ -3,7 +3,7 @@ ROLEASSIGN
 
 RoleAssign introduce the assign roles permission. While editing a user's account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by the site administrator.
 
-Please always use this projects issue tracker <http://drupal.org/project/issues/roleassign> to report bugs or to request features or support.
+Please always use this project's issue tracker <http://drupal.org/project/issues/roleassign> to report bugs or to request features or support.
 
 This module is sponsored by Webbredaktören <http://www.webbredaktoren.se/>.
 
