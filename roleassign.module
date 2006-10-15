@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: */
+/* $Id$ */
 
 /* Roleassign - a Drupal module that lets site administrators delegate
  * assignment of selected roles.
