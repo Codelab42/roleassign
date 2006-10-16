@@ -4,14 +4,14 @@
 
 /* Roleassign - a Drupal module that lets site administrators delegate
  * assignment of selected roles.
- * 
+ *
  * Copyright (C) 2006 Thomas Barregren.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -38,7 +38,7 @@ if (!function_exists('array_intersect_key'))
 		return $result;
    }
 }
- 
+
 /**
  * Implementation of hook_perm().
  *
@@ -55,27 +55,24 @@ function roleassign_perm()
 /**
  * Implementation of hook_menu().
  *
- * Adds <code>RoleAssign</code> as tab to <code>aminister » access
- * control</code>.
+ * Adds <code>role assign</code> to <code>administer » user management</code>
  */
 function roleassign_menu($may_cache)
 {
 	$items = array();
 	if ($may_cache)
 	{
-		$items[] = array('path' => 'admin/access/roleassign', 
-		'title' => t('RoleAssign'),
-		'callback' => 'roleassign_admin',
-		'type' => MENU_LOCAL_TASK,
-		'weight' => 1,
+		$items[] = array('path' => 'admin/user/roleassign',
+		'title' => t('role assign'),
+		'callback' => 'drupal_get_form',
+		'callback arguments' => array('roleassign_admin'),
+		'description' => t('Lets site administrators delegate assignment of selected roles.'),
 		'access' => user_access('administer access control'));
 	}
 	return $items;
 }
 
 /**
- * Menu callback.
- *
  * Returns a system settings form for the administrator to select which roles
  * will be avaiable to assign for users with the <code>assign roles</code>
  * permission.
@@ -92,9 +89,9 @@ function roleassign_admin()
 	// and 'authenticated user'.
 	$roles = user_roles(true);
 	unset($roles[DRUPAL_AUTHENTICATED_RID]);
-	
+
 	// Show checkboxes with roles that can be delegated if any.
-	if ($roles)	
+	if ($roles)
 		$form['roleassign_roles'] = array
 		(
 			'#type' => 'checkboxes',
@@ -111,14 +108,14 @@ function roleassign_admin()
 		);
 
 	// Return system settings form
-	return system_settings_form('roleassign_admin', $form);
+	return system_settings_form($form);
 
 }
 
 /**
  * Implementation of hook_form_alter().
  *
- * Adds chackboxes for assignable roles to the user edit form.
+ * Adds checkboxes for assignable roles to the user edit form.
  */
 function roleassign_form_alter($form_id, &$form)
 {
@@ -131,31 +128,31 @@ function roleassign_form_alter($form_id, &$form)
 	// or the user hasn't right to assign roles
 	if (user_access('administer access control') || !user_access('assign roles'))
 		return;
-			
+
 	// Get all roles that are available
 	$roles = user_roles(true);
-	
+
 	// Get roles that are available for assignment
 	$assignable_roles = array_filter(variable_get('roleassign_roles',  array()));
 	$assignable_roles = array_intersect_key($roles, $assignable_roles);
-	
+
 	// Get roles already assigned to the user
 	$user = user_load(array('uid' => arg(1)));
 	$assigned_roles = $user->roles;
-	
+
 	// Get sticky roles, that is already assigned roles that are not
 	// available for reassignment.
 	$sticky_roles = array_diff($assigned_roles, $assignable_roles);
 	$sticky_roles = array_intersect_key($roles, $sticky_roles);
-	
-	// Save sticky roles for later use in roleassign_user().
+
+	// Store sticky roles for later use in roleassign_user().
 	_roleassign_sticky_roles($sticky_roles);
 
 	// Make a string of all sticky roles
 	foreach($sticky_roles as $role)
 		$sticky_roles_str .= $role.', ';
 	$sticky_roles_str = substr($sticky_roles_str, 0, strlen($sticky_roles_str) - 2);
-	
+
 	// Add a role checkbox field to the form
 	$form['account']['roleassign_roles'] = array
 	(
@@ -163,7 +160,7 @@ function roleassign_form_alter($form_id, &$form)
 		'#title' => t('Assignable roles'),
 		'#options' => $assignable_roles,
 		'#default_value' => array_keys($assigned_roles),
-		'#description' => t('The user receives the combined permissions of all roles selected here and following roles: %roles.', array('%roles' => theme('placeholder', $sticky_roles_str)))
+		'#description' => t('The user receives the combined permissions of all roles selected here and following roles: %roles.', array('%roles' => $sticky_roles_str))
 	);
 
 }
@@ -189,7 +186,7 @@ function roleassign_user($type, &$edit, &$user, $category = NULL)
 		watchdog('security', $message, WATCHDOG_WARNING);
 		form_set_error('category', $message);
 	}
-	
+
 	// On submit, copy sticky and assigned roles from 'roleassign_roles'
 	// to 'roles'
 	if ($type == 'submit')
@@ -217,12 +214,10 @@ function roleassign_help($section="admin/help#roleassign")
 {
 	switch ($section)
 	{
-		case 'admin/modules#description':
-			return t('Lets site administrators delegate assignment of selected roles.');
-		case 'admin/access/roleassign':
-			return t(_roleassign_settings_help());
+		case 'admin/user/roleassign':
+			return _roleassign_settings_help();
 		case 'admin/help#roleassign':
-			return t(_roleassign_help_help());
+			return _roleassign_help_help();
 	}
 }
 
@@ -231,9 +226,10 @@ function roleassign_help($section="admin/help#roleassign")
  */
 function _roleassign_settings_help()
 {
-	return <<<EOT
-		<p>Users with both <code>administer users</code> and <code>assign roles</code> permissions are allowed to assign the roles selected below. For more information, see <a href="/admin/help/roleassign">help page</a>.</p>
+	$help = <<<EOT
+		<p>Users with both <code>administer users</code> and <code>assign roles</code> permissions are allowed to assign the roles selected below. For more information, see the !help.</p>
 EOT;
+	return t($help, array('!help' => l(t('help page'), 'admin/help/roleassign')));
 }
 
 /**
@@ -241,35 +237,51 @@ EOT;
  */
 function _roleassign_help_help()
 {
-	$version = str_replace(array('$Re'.'vision:', ' $'), array('', ''), '$Revision$');
-	$year = substr('$Date$', 7, 4);
 	$help = <<<EOT
-		<p>RoleAssign introduce the <code>assign roles</code> permission. While editing a user's account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by the site administrator.</p>
+		<!-- Copyright (C) !year Thomas Barregren [thomas@webbredaktoren.se] -->
+		<style type="text/css" media="all">
+			code,
+			kbd
+			{
+				padding: 1px;
+				font-family: "Bitstream Vera Sans Mono", Monaco, "Lucida Console", monospace;
+				background-color: #EDF1F3;
+			}
+		</style>
+		<p>RoleAssign lets site administrators delegate assignment of selected roles.</p>
+		<p>RoleAssign introduce the <code>assign roles</code> permission. While editing a user's account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by users with the <code>administer access control</code> permission.</p>
 		<p><strong>Please always use this project's <a href="http://drupal.org/project/issues/roleassign" rel="nofollow">issue tracker</a> to report bugs or to request features or support.</strong></p>
 		<p>This module is sponsored by <a href="http://www.webbredaktoren.se/">Webbredaktören</a>.</p>
 		<!--break-->
 		<h2>Background</h2>
-		<p>It is possible for site administrators to delegate the administration through the <code>administer users</code> permission. But the <code>administer users</code> permission doesn't include the right to assign roles to the user. That is necessary if the delegatee should be able to administrate the user accounts without intervention from a site administrator.</p>
-		<p>To delegate the assignment of roles, site administrators have had until now no other choice than also grant the <code>administer access control</code> permission. But that is not advisable. The <code>administer access control</code> permission is very far-reaching, giving rights to access all roles, and worse, to grant any rights to any role. That can be abused by the delegatee, who can assign himself all rights and thereby take control over the site.</p>
-		<p>This module solves this dilemma by introducing the <code>assign roles</code> permission. While editing a user's account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by the site administrator.</p>
+		<p>It is possible for site administrators to delegate the user administration through the <code>administer users</code> permission. But that doesn't include the right to assign roles to users. That is necessary if the delegatee should be able to administrate user accounts without intervention from a site administrator.</p>
+		<p>To delegate the assignment of roles, site administrators have had until now no other choice than also grant the <code>administer access control</code> permission. But that is not advisable, since it gives right to access all roles, and worse, to grant any rights to any role. That can be abused by the delegatee, who can assign himself all rights and thereby take control over the site.</p>
+		<p>This module solves this dilemma by introducing the <code>assign roles</code> permission. While editing a user's account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by users with the <code>administer access control</code> permission.</p>
+		<h2>Install</h2>
+		<ol>
+			<li>Copy the entire <kbd>roleassign</kbd> directory, containing the <kbd>roleassign.module</kbd> and other files, to your Drupal modules directory.</li>
+			<li>Log in as site administrator.</li>
+			<li>Go to the administration page for modules and enable the module.</li>
+		</ol>
 		<h2>Configuration</h2>
 		<ol>
-			<li>Go to <code>administer » access control</code>. Under the permissions tab, grant <code>assign roles</code> permission to those roles that should be able to assign roles to other users. Notice that besides the <code>assign roles</code> permission, these roles also must have the <code>administer users</code> permission.</li>
-			<li>Go to <code>administer » access control</code>. Under the RoleAssign tab, select those roles that should be available for assignment by users with <code>assign roles</code> permission.</li>
-			<li>Go to <code>administer » users</code>. For each user that should be able to assign roles, click on the corresponding <code>edit</code> link, and assign the user a role with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>
+			<li>Log in as site administrator.</li>
+			<li>Go to the administration page for access control and grant <code>assign roles</code> permission to those roles that should be able to assign roles to other users. Notice that besides the <code>assign roles</code> permission, these roles also must have the <code>administer users</code> permission.</li>
+			<li>Go to the administration page for role assign and select those roles that should be available for assignment by users with <code>assign roles</code> permission.</li>
+			<li>For each user that should be able to assign roles, go to the user's account and select a role with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>
 		</ol>
 		<h2>Usage</h2>
 		<ol>
 			<li>Log in as a user with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>
-			<li>To change the roles of a user, go to <code>administer » users</code> and click on the user's <code>edit</code> link. Review the assignable roles and change the as necessary.</li>
+			<li>To change the roles of a user, go to the user's account and review the assignable roles and change them as necessary.</li>
 		</ol>
 		<h2>License</h2>
-EOT;
-	$help .= '<p>RoleAssign revision '.$version.': Copyright &copy; '.$year.' <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>';
-	$help .= <<<EOT
+		<p>RoleAssign revision !version. Copyright &copy; !year <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>
 		<p>RoleAssign is free software; you can redistribute it and/or modify it under the terms of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
 		<p>RoleAssign is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> for more details.</p>
 		<p>You should have received a copy of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.</p>
 EOT;
-	return $help;
+	$version = str_replace(array('$Re'.'vision:', ' $'), array('', ''), '$Revision$');
+	$year = substr('$Date$', 7, 4);
+	return t($help, array('!version' => $version, '!year' => $year));
 }
