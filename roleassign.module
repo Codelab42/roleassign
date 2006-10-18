@@ -120,8 +120,8 @@ function roleassign_admin()
 function roleassign_form_alter($form_id, &$form)
 {
 
-	// Do nothing if not the user_edit form
-	if ($form_id != 'user_edit')
+	// Do nothing if the right form isn't displayed
+	if ($form_id != 'user_edit' || !isset($form['account']))
 		return;
 
 	// Do nothing if the roles field already is shown
