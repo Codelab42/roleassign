@@ -120,49 +120,98 @@ function roleassign_admin()
 function roleassign_form_alter($form_id, &$form)
 {
 
-	// Do nothing if the right form isn't displayed
-	if ($form_id != 'user_edit' || !isset($form['account']))
-		return;
-
 	// Do nothing if the roles field already is shown
 	// or the user hasn't right to assign roles
-	if (user_access('administer access control') || !user_access('assign roles'))
+	if (user_access('administer access control') || !user_access('assign roles') ||!user_access('administer users'))
 		return;
 
-	// Get all roles that are available
-	$roles = user_roles(true);
+	// The user's account edit form is being displayed.
+  if ($form_id == 'user_edit' && isset($form['account'])) {
 
-	// Get roles that are available for assignment
-	$assignable_roles = array_filter(variable_get('roleassign_roles',  array()));
-	$assignable_roles = array_intersect_key($roles, $assignable_roles);
+    // Get all roles that are available
+    $roles = user_roles(true);
 
-	// Get roles already assigned to the user
-	$user = user_load(array('uid' => arg(1)));
-	$assigned_roles = $user->roles;
+    // Get roles that are available for assignment
+    $assignable_roles = array_filter(variable_get('roleassign_roles',  array()));
+    $assignable_roles = array_intersect_key($roles, $assignable_roles);
 
-	// Get sticky roles, that is already assigned roles that are not
-	// available for reassignment.
-	$sticky_roles = array_diff($assigned_roles, $assignable_roles);
-	$sticky_roles = array_intersect_key($roles, $sticky_roles);
+    // Get roles already assigned to the user
+    $user = user_load(array('uid' => arg(1)));
+    $assigned_roles = $user->roles;
 
-	// Store sticky roles for later use in roleassign_user().
-	_roleassign_sticky_roles($sticky_roles);
+    // Get sticky roles, that is already assigned roles that are not
+    // available for reassignment.
+    $sticky_roles = array_diff($assigned_roles, $assignable_roles);
+    $sticky_roles = array_intersect_key($roles, $sticky_roles);
 
-	// Make a string of all sticky roles
-	foreach($sticky_roles as $role)
-		$sticky_roles_str .= $role.', ';
-	$sticky_roles_str = substr($sticky_roles_str, 0, strlen($sticky_roles_str) - 2);
+    // Store sticky roles for later use in roleassign_user().
+    _roleassign_sticky_roles($sticky_roles);
 
-	// Add a role checkbox field to the form
-	$form['account']['roleassign_roles'] = array
-	(
-		'#type' => 'checkboxes',
-		'#title' => t('Assignable roles'),
-		'#options' => $assignable_roles,
-		'#default_value' => array_keys($assigned_roles),
-		'#description' => t('The user receives the combined permissions of all roles selected here and following roles: %roles.', array('%roles' => $sticky_roles_str))
-	);
+    // Make a string of all sticky roles
+    foreach($sticky_roles as $role)
+    	$sticky_roles_str .= $role.', ';
+    $sticky_roles_str = substr($sticky_roles_str, 0, strlen($sticky_roles_str) - 2);
 
+    // Add a role checkbox field to the form
+    $form['account']['roleassign_roles'] = array
+    (
+    	'#type' => 'checkboxes',
+    	'#title' => t('Assignable roles'),
+    	'#options' => $assignable_roles,
+    	'#default_value' => array_keys($assigned_roles),
+    	'#description' => t('The user receives the combined permissions of all roles selected here and following roles: %roles.', array('%roles' => $sticky_roles_str))
+    );
+  }
+
+  // A user admin is at the add user page.
+  elseif ($form_id == 'user_register')
+  {
+
+    // Get all roles that are available
+    $roles = user_roles(true);
+
+    // Get roles that are available for assignment
+    $assignable_roles = array_filter(variable_get('roleassign_roles',  array()));
+    $assignable_roles = array_intersect_key($roles, $assignable_roles);
+
+    // It's necessary to separate these because the form feilds may or may not be
+    // underneath the 'account' fieldset.
+    if (isset($form['account']))
+    {
+
+      // Add a role checkbox field to the form.
+    	$form['account']['roles'] = array
+      (
+        '#type' => 'checkboxes',
+        '#title' => t('Assignable roles'),
+        '#default_value' => array_keys((array)$edit['roles']),
+        '#options' => $assignable_roles,
+        '#description' => t('The user receives the combined permissions of the %au role, and all roles selected here.', array('%au' => t('authenticated user')))
+      );
+
+    	// The form weights aren't properly set with the account fieldset in place,
+    	// so set them here.
+    	$form['account']['name']['#weight'] = 1;
+      $form['account']['mail']['#weight'] = 2;
+      $form['account']['pass']['#weight'] = 3;
+      $form['account']['status']['#weight'] = 4;
+      $form['account']['roles']['#weight'] = 5;
+      $form['account']['notify']['#weight'] = 6;
+    }
+    else
+    {
+
+      // Add a role checkbox field to the form
+    	$form['roles'] = array
+      (
+        '#type' => 'checkboxes',
+        '#title' => t('Assignable roles'),
+        '#default_value' => array_keys((array)$edit['roles']),
+        '#options' => $assignable_roles,
+        '#description' => t('The user receives the combined permissions of the %au role, and all roles selected here.', array('%au' => t('authenticated user')))
+      );
+    }
+  }
 }
 
 /**
@@ -192,6 +241,72 @@ function roleassign_user($type, &$edit, &$user, $category = NULL)
 	if ($type == 'submit')
 		$edit['roles'] = array_filter(_roleassign_sticky_roles() + (array)$edit['roleassign_roles']);
 
+}
+
+/**
+ * Implementation of hook_user_operations().
+ */
+function roleassign_user_operations() {
+  global $form_values;
+
+  $operations = array();
+
+  if (!user_access('administer access control') && user_access('assign roles'))
+  {
+
+    // Get all roles that are available
+  	$roles = user_roles(true);
+
+  	// Get roles that are available for assignment
+  	$assignable_roles = array_filter(variable_get('roleassign_roles',  array()));
+  	$assignable_roles = array_intersect_key($roles, $assignable_roles);
+
+    $add_roles = array();
+    foreach ($assignable_roles as $key => $value) {
+      $add_roles['roleassign_add_role-'. $key] = $value;
+    }
+
+    $remove_roles = array();
+    foreach ($assignable_roles as $key => $value) {
+      $remove_roles['roleassign_remove_role-'. $key] = $value;
+    }
+
+    if (count($assignable_roles)) {
+      $role_operations = array(
+        t('Add a role to the selected users') => array(
+          'label' => $add_roles,
+        ),
+        t('Remove a role from the selected users') => array(
+          'label' => $remove_roles,
+        ),
+      );
+
+      $operations = $role_operations;
+    }
+
+    // If the form has been posted, we need to insert the proper data for role editing if necessary.
+    if ($form_values) {
+      $operation_rid = explode('-', $form_values['operation']);
+      $operation = $operation_rid[0];
+      $rid = $operation_rid[1];
+      if ($operation == 'roleassign_add_role' || $operation == 'roleassign_remove_role') {
+        if (!user_access('administer access control') && user_access('assign roles')) {
+          // Chop off the 'roleassign_' part of the operation string, then we can use the core
+          // callback for adding roles.
+          $operations[$form_values['operation']] = array(
+            'callback' => 'user_multiple_role_edit',
+            'callback arguments' => array(substr($operation, 11), $rid),
+          );
+        }
+        else {
+          watchdog('security', t('Detected malicious attempt to alter protected user fields.'), WATCHDOG_WARNING);
+          return;
+        }
+      }
+    }
+  }
+
+  return $operations;
 }
 
 /**
