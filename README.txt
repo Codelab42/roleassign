@@ -1,17 +1,13 @@
 ROLEASSIGN
 ==========
 
-RoleAssign lets site administrators delegate assignment of selected
-roles.
+RoleAssign specifically allows site administrators to further delegate
+the task of managing user's roles.
 
-RoleAssign introduce the 'assign roles' permission. While editing a
-user's account information, a user with this permission will be able to
-select roles for the user from a set of available roles. Roles available
-are configured by users with the 'administer access control' permission.
-
-Please always use this project's issue tracker
-<http://drupal.org/project/issues/roleassign> to report bugs or to
-request features or support.
+RoleAssign introduces a new permission called 'assign roles'. Users
+with this permission are able to assign selected roles to still other
+users. Only users with the 'administer access control' permission may
+select which roles are available for assignment through this module.
 
 This module is sponsored by Webbredaktoren <http://www.webbredaktoren.se/>.
 
