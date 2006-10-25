@@ -140,16 +140,16 @@ function roleassign_form_alter($form_id, &$form)
 
 	// Do nothing if the user already has 'administer access control'
 	// permission.
-	if (user_access('administer access control') || !user_access('administer users') || !user_access('assign roles'))
+	if (user_access('administer access control'))
 		return;
 
 	// Do nothing if the user hasn't both 'administer users' and
 	// 'assign roles' permissions.
-	if (!(user_access('administer users') && user_access('assign roles')))
+	if (!user_access('administer users') || !user_access('assign roles'))
 		return;
 
-	// Do nothing if user edit form isn't shown.
-	if ($form_id != 'user_edit' || !isset($form['account']))
+	// Do nothing if right form isn't shown.
+	if ($form_id != 'user_register' && ($form_id != 'user_edit' || !isset($form['account'])))
 		return;
 
 	// Get all roles that are available.
