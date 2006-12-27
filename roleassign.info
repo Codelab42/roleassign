@@ -1,3 +1,4 @@
 ; $Id$
-name = RoleAssign
-description = Allows site administrators to further delegate the task of managing user's roles.
+name = "RoleAssign"
+description = "Allows site administrators to further delegate the task of managing user's roles."
+version = "$Name$"
