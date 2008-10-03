@@ -336,7 +336,6 @@ function _roleassign_help_help()
 	$year = substr('$Date$', 7, 4);
 	return
 '
-<!-- Copyright (C) ' . $year . ' Thomas Barregren <mailto:thomas@webbredaktoren.se> -->
 <style type="text/css" media="all">
 	code,
 	kbd
@@ -374,11 +373,6 @@ function _roleassign_help_help()
 	<li>Log in as a user with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>
 	<li>To change the roles of a user, go to the user\'s account and review the assignable roles and change them as necessary.</li>
 </ol>
-<h2>License</h2>
-<p>RoleAssign revision !version. Copyright &copy; !year <a href="mailto:thomas@webbredaktoren.se">Thomas Barregren</a>.</p>
-<p>RoleAssign is free software; you can redistribute it and/or modify it under the terms of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
-<p>RoleAssign is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> for more details.</p>
-<p>You should have received a copy of the <a href="http://www.gnu.org/licenses/gpl.html#SEC1">GNU General Public License</a> along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.</p>
 ',
 		array('!version' => $version, '!year' => $year)
 	);
