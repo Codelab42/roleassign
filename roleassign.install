@@ -5,7 +5,6 @@
 /**
  * Implementation of hook_uninstall().
  */
-function roleassign_uninstall()
-{
+function roleassign_uninstall() {
 	variable_del('roleassign_roles');
 }
