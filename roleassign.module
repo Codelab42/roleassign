@@ -296,7 +296,7 @@ function _roleassign_assignable_roles($roles) {
  * Store and retrive sticky roles.
  */
 function _roleassign_sticky_roles($new_sticky_roles = null) {
-  static $sticky_roles;
+  static $sticky_roles = array();
   if (isset($new_sticky_roles)) {
     $sticky_roles = $new_sticky_roles;
   }
