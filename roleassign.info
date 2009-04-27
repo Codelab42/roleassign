@@ -2,4 +2,3 @@
 name = "RoleAssign"
 description = "Allows site administrators to further delegate the task of managing user's roles."
 core = 6.x
-php = 5.0

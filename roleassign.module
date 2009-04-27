@@ -2,18 +2,24 @@
 
 // $Id$
 
+
+
 /**
  * @file
  * Allows site administrators to further delegate the task of managing user's
  * roles.
+ *
+ * Author:
+ *   Thomas Barregren <http://drupal.org/user/16678>.
+ *   Tobias Sjösten <http://drupal.org/user/213383>.
+ *
+ * Sponsor:
+ *   NodeOne <http://nodeone.se/>.
  */
 
 
-/*
- * PHP4 implementation of the PHP5 function array_intersect_key().
- * See http://php.net/manual/function.array-intersect-key.php#68179.
- * Thanks pjb <http://drupal.org/user/77935> for point it out.
- */
+// PHP5 prior to 5.1 doesn't have array_intersect_key(). Thanks pjb for point it
+// out. See http://se.php.net/manual/en/function.array-intersect-key.php#68179.
 if (!function_exists('array_intersect_key')) {
   function array_intersect_key() {
     $arrs = func_get_args();
@@ -26,7 +32,7 @@ if (!function_exists('array_intersect_key')) {
       }
     }
     return $result;
-  }
+   }
 }
 
 /**
@@ -63,12 +69,11 @@ function roleassign_perm() {
 function roleassign_menu() {
   $items = array();
 
-  $items['admin/user/roleassign'] = array
-  (
+  $items['admin/user/roleassign'] = array (
     'title' => 'Role assign',
+    'description' => "Allows site administrators to further delegate the task of managing user's roles.",
     'page callback' => 'drupal_get_form',
     'page arguments' => array('roleassign_admin'),
-    'description' => "Allows site administrators to further delegate the task of managing user's roles.",
     'access arguments' => array('administer permissions')
   );
 
@@ -93,8 +98,7 @@ function roleassign_admin() {
 
   // Show checkboxes with roles that can be delegated if any.
   if ($roles) {
-    $form['roleassign_roles'] = array
-    (
+    $form['roleassign_roles'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Roles'),
       '#options' => $roles,
@@ -103,8 +107,7 @@ function roleassign_admin() {
     );
   }
   else {
-    $form['roleassign_roles'] = array
-    (
+    $form['roleassign_roles'] = array(
       '#type' => 'markup',
       '#value' => '<p>No assignable roles avaiable. You have to '. l(t('create roles'), 'admin/user/roles') .' that can be assigned.</p>'
     );
@@ -120,6 +123,7 @@ function roleassign_admin() {
  * Adds checkboxes for assignable roles to the user edit form.
  */
 function roleassign_form_alter(&$form, &$form_state, $form_id) {
+
   // Do nothing if the user already has 'administer permissions' permission.
   if (user_access('administer permissions')) {
     return;
@@ -143,7 +147,6 @@ function roleassign_form_alter(&$form, &$form_state, $form_id) {
   $assignable_roles = _roleassign_assignable_roles($roles);
 
   // Get roles already assigned to the user.
-  // The use of the superfluous $user variable is required by PHP4.
   $user = user_load(array('uid' => arg(1)));
   $assigned_roles = $user->roles;
 
@@ -161,8 +164,7 @@ function roleassign_form_alter(&$form, &$form_state, $form_id) {
   $sticky_roles_str = implode(', ', $sticky_roles);
 
   // Build the assign roles checkboxes.
-  $roles_field = array
-  (
+  $roles_field = array(
     '#type' => 'checkboxes',
     '#title' => t('Assignable roles'),
     '#options' => $assignable_roles,
@@ -237,8 +239,7 @@ function roleassign_user_operations() {
       $add_roles['roleassign_add_role-'. $key] = $value;
       $remove_roles['roleassign_remove_role-'. $key] = $value;
     }
-    $operations = array
-    (
+    $operations = array(
       t('Add a role to the selected users') => array('label' => $add_roles),
       t('Remove a role from the selected users') => array('label' => $remove_roles)
     );

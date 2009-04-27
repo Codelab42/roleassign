@@ -1,6 +1,7 @@
 <?php
 
-/* $Id$ */
+// $Id$
+
 
 /**
  * Implementation of hook_uninstall().
