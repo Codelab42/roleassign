@@ -75,4 +75,3 @@ users' permissions.
 the assignable roles and change them as necessary.
 
 
-$Id$
