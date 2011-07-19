@@ -171,10 +171,15 @@ function roleassign_form_alter(&$form, &$form_state, $form_id) {
 
   // Add the assign roles checkboxes to the user form, and make sure
   // that the notify user checkbox comes last.
-  $notify_field = $user_form['notify'];
-  unset($user_form['notify']);
-  $user_form['roleassign_roles'] = $roles_field;
-  $user_form['notify'] = $notify_field;
+  if (isset($user_form['notify'])) {
+    $notify_field = $user_form['notify'];
+    unset($user_form['notify']);
+    $user_form['roleassign_roles'] = $roles_field;
+    $user_form['notify'] = $notify_field;
+  }
+  else {
+    $user_form['roleassign_roles'] = $roles_field;
+  }
 }
 
 /**
@@ -238,12 +243,11 @@ function roleassign_user_operations() {
 
   // The global variable $form_values is not available anymore;
   // the $_POST values are "sanitized" below.
-  $operation = $_POST['operation'];
 
   // The required 'callback' key and optional 'callback arguments' key are
   // actually only needed when someone has posted. We therefore postpone
   // the attachement of these until $form_values is set.
-  if ($operation) {
+  if (isset($_POST['operation']) && $operation = $_POST['operation']) {
     // Get operation and role id.
     $op = explode('-', $operation);
     $rid = intval($op[1]);
