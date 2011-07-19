@@ -7,13 +7,6 @@
  * @file
  * Allows site administrators to further delegate the task of managing user's
  * roles.
- *
- * Author:
- *   Thomas Barregren <http://drupal.org/user/16678>.
- *   Tobias Sjösten <http://drupal.org/user/213383>.
- *
- * Sponsor:
- *   NodeOne <http://nodeone.se/>.
  */
 
 
@@ -325,7 +318,6 @@ function _roleassign_help_help() {
   (
 '<p>RoleAssign specifically allows site administrators to further delegate the task of managing user\'s roles.</p>
 <p>RoleAssign introduces a new permission called <code>assign roles</code>. Users with this permission are able to assign selected roles to still other users. Only users with the <code>administer access control</code> permission may select which roles are available for assignment through this module.</p>
-<p>This module is sponsored by <a href="http://www.webbredaktoren.se/">Webbredaktören</a>.</p>
 <!--break-->
 <h2>Background</h2>
 <p>It is possible for site administrators to delegate the user administration through the <code>administer users</code> permission. But that doesn\'t include the right to assign roles to users. That is necessary if the delegatee should be able to administrate user accounts without intervention from a site administrator.</p>

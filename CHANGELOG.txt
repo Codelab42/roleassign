@@ -1,0 +1,12 @@
+
+CHANGELOG for RoleAssign for Drupal 6
+
+
+roleassign 6.x-1.x-dev:
+  Maintainership passed to salvis.
+  Minor code cleanup, by TBarregren.
+
+
+roleassign 6.x-1.0-beta3 (2010-10-09):
+  Last release by TBarregren.
+
