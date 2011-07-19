@@ -323,6 +323,7 @@ function _roleassign_help_help() {
   <li>Go to the administration page for role assign and select those roles that should be available for assignment by users with <code>assign roles</code> permission.</li>
   <li>For each user that should be able to assign roles, go to the user\'s account and select a role with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>
 </ol>
+<p><b>Beware:</b> granting <code>administer users</code> permission to users will allow them to modify admin passwords or email addresses or even delete the site administrator account. The <a href="http://drupal.org/project/userprotect">User protect</a> module can prevent this.</p>
 <h2>Usage</h2>
 <ol>
   <li>Log in as a user with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>

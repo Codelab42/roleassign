@@ -65,6 +65,10 @@ permission.
 account and select a role with both the 'assign roles' and the
 'administer users' permissions.
 
+Beware: granting 'administer users' permission to users will allow them
+to modify admin passwords or email addresses or even delete the site
+administrator account. The User Protect module can prevent this.
+
 
 USAGE
 -----
