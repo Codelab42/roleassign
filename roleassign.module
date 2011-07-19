@@ -317,12 +317,12 @@ function _roleassign_help_help() {
   return t
   (
 '<p>RoleAssign specifically allows site administrators to further delegate the task of managing user\'s roles.</p>
-<p>RoleAssign introduces a new permission called <code>assign roles</code>. Users with this permission are able to assign selected roles to still other users. Only users with the <code>administer access control</code> permission may select which roles are available for assignment through this module.</p>
+<p>RoleAssign introduces a new permission called <code>assign roles</code>. Users with this permission are able to assign selected roles to still other users. Only users with the <code>administer permissions</code> permission may select which roles are available for assignment through this module.</p>
 <!--break-->
 <h2>Background</h2>
 <p>It is possible for site administrators to delegate the user administration through the <code>administer users</code> permission. But that doesn\'t include the right to assign roles to users. That is necessary if the delegatee should be able to administrate user accounts without intervention from a site administrator.</p>
-<p>To delegate the assignment of roles, site administrators have had until now no other choice than also grant the <code>administer access control</code> permission. But that is not advisable, since it gives right to access all roles, and worse, to grant any rights to any role. That can be abused by the delegatee, who can assign himself all rights and thereby take control over the site.</p>
-<p>This module solves this dilemma by introducing the <code>assign roles</code> permission. While editing a user\'s account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by users with the <code>administer access control</code> permission.</p>
+<p>To delegate the assignment of roles, site administrators have had until now no other choice than also grant the <code>administer permissions</code> permission. But that is not advisable, since it gives right to access all roles, and worse, to grant any rights to any role. That can be abused by the delegatee, who can assign himself all rights and thereby take control over the site.</p>
+<p>This module solves this dilemma by introducing the <code>assign roles</code> permission. While editing a user\'s account information, a user with this permission will be able to select roles for the user from a set of available roles. Roles available are configured by users with the <code>administer permissions</code> permission.</p>
 <h2>Install</h2>
 <ol>
   <li>Copy the entire <kbd>roleassign</kbd> directory, containing the <kbd>roleassign.module</kbd> and other files, to your Drupal modules directory.</li>
