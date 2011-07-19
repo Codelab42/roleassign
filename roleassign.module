@@ -1,8 +1,5 @@
 <?php
 
-
-
-
 /**
  * @file
  * Allows site administrators to further delegate the task of managing user's
@@ -11,7 +8,7 @@
 
 
 // PHP5 prior to 5.1 doesn't have array_intersect_key(). Thanks pjb for point it
-// out. See http://se.php.net/manual/en/function.array-intersect-key.php#68179.
+// out. See http://php.net/manual/en/function.array-intersect-key.php#68179.
 if (!function_exists('array_intersect_key')) {
   function array_intersect_key() {
     $arrs = func_get_args();
@@ -24,7 +21,7 @@ if (!function_exists('array_intersect_key')) {
       }
     }
     return $result;
-   }
+  }
 }
 
 /**
@@ -61,12 +58,12 @@ function roleassign_perm() {
 function roleassign_menu() {
   $items = array();
 
-  $items['admin/user/roleassign'] = array (
+  $items['admin/user/roleassign'] = array(
     'title' => 'Role assign',
     'description' => "Allows site administrators to further delegate the task of managing user's roles.",
     'page callback' => 'drupal_get_form',
     'page arguments' => array('roleassign_admin'),
-    'access arguments' => array('administer permissions')
+    'access arguments' => array('administer permissions'),
   );
 
   return $items;
@@ -95,13 +92,13 @@ function roleassign_admin() {
       '#title' => t('Roles'),
       '#options' => $roles,
       '#default_value' => variable_get('roleassign_roles',  array()),
-      '#description' => t('Select roles that should be available for assignment.')
+      '#description' => t('Select roles that should be available for assignment.'),
     );
   }
   else {
     $form['roleassign_roles'] = array(
       '#type' => 'markup',
-      '#value' => '<p>No assignable roles avaiable. You have to '. l(t('create roles'), 'admin/user/roles') .' that can be assigned.</p>'
+      '#value' => '<p>No assignable roles avaiable. You have to '. l(t('create roles'), 'admin/user/roles') .' that can be assigned.</p>',
     );
   }
 
@@ -197,8 +194,7 @@ function roleassign_user($type, &$edit, &$user, $category = NULL) {
   // If someone is trying to update user's roles, it's a malicious
   // attempt to alter user's roles.
   if ($type == 'validate' && !user_access('assign roles')) {
-    $message = t('Detected malicious attempt to alter user\'s roles.');
-    watchdog('security', $message, WATCHDOG_WARNING);
+    watchdog('security', 'Detected malicious attempt to alter user\'s roles.', array(), WATCHDOG_WARNING);
     form_set_error('category', $message);
   }
 
@@ -213,7 +209,7 @@ function roleassign_user($type, &$edit, &$user, $category = NULL) {
  * Implementation of hook_user_operations().
  *
  * Add or remove roles to selected users.
- * Thanks hunmonk <http://drupal.org/user/22079> for the original code.
+ * Thanks to hunmonk for the original code.
  */
 function roleassign_user_operations() {
   // Do nothing if add and remove roles operations already is shown or
@@ -233,15 +229,15 @@ function roleassign_user_operations() {
     }
     $operations = array(
       t('Add a role to the selected users') => array('label' => $add_roles),
-      t('Remove a role from the selected users') => array('label' => $remove_roles)
+      t('Remove a role from the selected users') => array('label' => $remove_roles),
     );
   }
   else {
     $operations = array();
   }
 
-  // the global variable $form_values is not available anymore:
-  // the $_POST values are "sanitized" below
+  // The global variable $form_values is not available anymore;
+  // the $_POST values are "sanitized" below.
   $operation = $_POST['operation'];
 
   // The required 'callback' key and optional 'callback arguments' key are
@@ -260,18 +256,16 @@ function roleassign_user_operations() {
     // If someone is trying to update user's roles, it's a malicious
     // attempt to alter user's roles.
     if (!user_access('assign roles')) {
-      $message = t('Detected malicious attempt to alter user\'s roles.');
-      watchdog('security', $message, WATCHDOG_WARNING);
+      watchdog('security', 'Detected malicious attempt to alter user\'s roles.', array(), WATCHDOG_WARNING);
       form_set_error('category', $message);
     }
 
     // Form the name of the core callback functions for adding and
     // removing roles by choping off the 'roleassign_' part of the
     // operation string.
-    $operations[$operation] = array
-    (
-      'callback' => 'user_multiple_role_edit',
-      'callback arguments' => array(substr($op, 11), $rid)
+    $operations[$operation] = array(
+      'callback'           => 'user_multiple_role_edit',
+      'callback arguments' => array(substr($op, 11), $rid),
     );
   }
 
@@ -282,13 +276,13 @@ function roleassign_user_operations() {
  * Returns assignable roles.
  */
 function _roleassign_assignable_roles($roles) {
-  return array_intersect_key($roles, array_filter(variable_get('roleassign_roles',  array())));
+  return array_intersect_key($roles, array_filter(variable_get('roleassign_roles', array())));
 }
 
 /**
  * Store and retrive sticky roles.
  */
-function _roleassign_sticky_roles($new_sticky_roles = null) {
+function _roleassign_sticky_roles($new_sticky_roles = NULL) {
   static $sticky_roles = array();
   if (isset($new_sticky_roles)) {
     $sticky_roles = $new_sticky_roles;
@@ -300,23 +294,16 @@ function _roleassign_sticky_roles($new_sticky_roles = null) {
  * Returns short helptext to be used on the settings page.
  */
 function _roleassign_settings_help() {
-  return t
-  (
-    '<p>Users with both <code>administer users</code> and <code>assign roles</code> permissions are allowed to assign the roles selected below. For more information, see the !help.</p>',
-    array('!help' => l(t('help page'), 'admin/help/roleassign'))
-  );
+  return t('<p>Users with both <code>administer users</code> and <code>assign roles</code> permissions are allowed to assign the roles selected below. For more information, see the !help.</p>', array('!help' => l(t('help page'), 'admin/help/roleassign')));
 }
 
 /**
  * Returns full help text.
  */
 function _roleassign_help_help() {
-  $version = str_replace(array('$Re'.'vision:', ' $'), array('', ''), '$Revision$');
-  $year = substr('$Date$', 7, 4);
-  drupal_add_css(drupal_get_path('module', 'roleassign') .'/roleassign.css', 'module', 'all', false);
-  return t
-  (
-'<p>RoleAssign specifically allows site administrators to further delegate the task of managing user\'s roles.</p>
+  drupal_add_css(drupal_get_path('module', 'roleassign') .'/roleassign.css', 'module', 'all', FALSE);
+  return t('
+<p>RoleAssign specifically allows site administrators to further delegate the task of managing user\'s roles.</p>
 <p>RoleAssign introduces a new permission called <code>assign roles</code>. Users with this permission are able to assign selected roles to still other users. Only users with the <code>administer permissions</code> permission may select which roles are available for assignment through this module.</p>
 <!--break-->
 <h2>Background</h2>
@@ -340,8 +327,5 @@ function _roleassign_help_help() {
 <ol>
   <li>Log in as a user with both the <code>assign roles</code> and the <code>administer users</code> permissions.</li>
   <li>To change the roles of a user, go to the user\'s account and review the assignable roles and change them as necessary.</li>
-</ol>
-',
-    array('!version' => $version, '!year' => $year)
-  );
+</ol>');
 }
