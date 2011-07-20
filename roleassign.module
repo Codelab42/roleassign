@@ -200,7 +200,7 @@ function roleassign_user($type, &$edit, &$user, $category = NULL) {
   // attempt to alter user's roles.
   if ($type == 'validate' && !user_access('assign roles')) {
     watchdog('security', 'Detected malicious attempt to alter user\'s roles.', array(), WATCHDOG_WARNING);
-    form_set_error('category', $message);
+    form_set_error('category', t('Detected malicious attempt to alter user\'s roles.'));
   }
 
   // On submit, copy sticky and assigned roles from 'roleassign_roles'
@@ -261,7 +261,7 @@ function roleassign_user_operations() {
     // attempt to alter user's roles.
     if (!user_access('assign roles')) {
       watchdog('security', 'Detected malicious attempt to alter user\'s roles.', array(), WATCHDOG_WARNING);
-      form_set_error('category', $message);
+      form_set_error('category', t('Detected malicious attempt to alter user\'s roles.'));
     }
 
     // Form the name of the core callback functions for adding and
