@@ -3,6 +3,7 @@ CHANGELOG for RoleAssign for Drupal 6
 
 
 roleassign 6.x-1.x-dev:
+  Remove unnecessary quotes from the .info file.
   Avoid two 'undefined index' notices.
   #599440 by shark: Keep permission names in help text visible for light-on-dark themes.
   Minor coding style and porting clean-up.
