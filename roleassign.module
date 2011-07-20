@@ -71,7 +71,7 @@ function roleassign_menu() {
 
 /**
  * Returns a system settings form for the administrator to select which roles
- * will be avaiable to assign for users with the <code>assign roles</code>
+ * will be available to assign for users with the <code>assign roles</code>
  * permission.
  */
 function roleassign_admin() {
@@ -80,7 +80,7 @@ function roleassign_admin() {
     return;
   }
 
-  // Get all avaiable roles except for 'anonymous user'
+  // Get all available roles except for 'anonymous user'
   // and 'authenticated user'.
   $roles = user_roles(true);
   unset($roles[DRUPAL_AUTHENTICATED_RID]);
@@ -98,7 +98,7 @@ function roleassign_admin() {
   else {
     $form['roleassign_roles'] = array(
       '#type' => 'markup',
-      '#value' => '<p>No assignable roles avaiable. You have to '. l(t('create roles'), 'admin/user/roles') .' that can be assigned.</p>',
+      '#value' => '<p>No assignable roles available. You have to '. l(t('create roles'), 'admin/user/roles') .' that can be assigned.</p>',
     );
   }
 
@@ -139,7 +139,7 @@ function roleassign_form_alter(&$form, &$form_state, $form_id) {
   $user = user_load(array('uid' => arg(1)));
   $assigned_roles = $user->roles;
 
-  // A user might already have a role that isn't avaiable for assignment
+  // A user might already have a role that isn't available for assignment
   // through this module. Such a role is called "sticky".
   // Get sticky roles.
   $sticky_roles = array_diff($assigned_roles, $assignable_roles);
