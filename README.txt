@@ -9,8 +9,7 @@ with this permission are able to assign selected roles to still other
 users. Only users with the 'administer permissions' permission may
 select which roles are available for assignment through this module.
 
-This module was developped by TBarregren and sponsored by Webbredaktoren
-<http://www.webbredaktoren.se/>.
+This module was developped by TBarregren.
 
 
 BACKGROUND
