@@ -3,6 +3,9 @@ CHANGELOG for RoleAssign for Drupal 6
 
 
 roleassign 6.x-1.x-dev:
+
+
+roleassign 6.x-1.0-rc1 (2011-07-20):
   Fix a typo.
   Fix buglet introduced in porting clean-up.
   Remove unnecessary quotes from the .info file.
