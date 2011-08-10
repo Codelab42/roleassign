@@ -3,8 +3,13 @@ CHANGELOG for RoleAssign for Drupal 7
 
 
 roleassign 7.x-1.x-dev:
+
+
+roleassign 7.x-1.0-beta1 (2011-08-11):
   Port to D7 and extract roleassign.admin.inc to reduce the footprint.
 
+
+roleassign 6.x-1.0 (2011-08-11):
 
 roleassign 6.x-1.0-rc1 (2011-07-20):
   Remove unnecessary quotes from the .info file.
@@ -14,7 +19,6 @@ roleassign 6.x-1.0-rc1 (2011-07-20):
   'administer access control' is called 'administer permissions' in D6.
   Maintainership passed to salvis.
   Minor code cleanup, by TBarregren.
-
 
 roleassign 6.x-1.0-beta3 (2010-10-09):
   Last release by TBarregren.
