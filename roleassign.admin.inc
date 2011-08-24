@@ -57,7 +57,7 @@ function _roleassign_form_alter(&$form, &$form_state, $form_id) {
 
   // Get roles already assigned to the user.
   $user = menu_get_object('user');
-  $assigned_roles = $user->roles;
+  $assigned_roles = (isset($user->roles) ? $user->roles : array());
 
   // A user might already have a role that isn't available for assignment
   // through this module. Such a role is called "sticky".
