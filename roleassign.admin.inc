@@ -100,6 +100,13 @@ function _roleassign_form_alter(&$form, &$form_state, $form_id) {
   else {
     $user_form['roleassign_roles'] = $roles_field;
   }
+
+  if (user_access('administer permissions', $user)) {
+    drupal_set_message(t('Some of the fields on this form are locked for this user.'), 'warning');
+    $form['account']['name']['#disabled'] = TRUE;
+    $form['account']['mail']['#disabled'] = TRUE;
+    $form['account']['pass']['#disabled'] = TRUE;
+  }
 }
 
 /**

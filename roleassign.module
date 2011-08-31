@@ -59,19 +59,24 @@ function roleassign_form_alter(&$form, &$form_state, $form_id) {
     return;
   }
 
-  // Do nothing if the user hasn't both 'administer users' and
+  // Do nothing if the user doesn't have both 'administer users' and
   // 'assign roles' permissions.
   if (!user_access('administer users') || !user_access('assign roles')) {
     return;
   }
 
   // Do nothing if right form isn't shown.
-  if ($form_id != 'user_register_form' && ($form_id != 'user_profile_form' || !isset($form['account']))) {
-    return;
+  if ($form_id == 'user_register_form' || ($form_id == 'user_profile_form' && isset($form['account']))) {
+    // Add the checkboxes to the user edit page.
+    _roleassign_module_load_include('admin.inc');
+    _roleassign_form_alter($form, $form_state, $form_id);
   }
-
-  _roleassign_module_load_include('admin.inc');
-  _roleassign_form_alter($form, $form_state, $form_id);
+  elseif ($form_id == 'system_modules') {
+    // Keep the (restricted) user from disabling this module.
+    $form['modules']['roleassign']['enable']['#disabled'] = TRUE;
+    $form['modules']['roleassign']['name']['#markup'] .= '<br /><span class="warning" title="' . t('You are not allowed to disable this module.') .
+                                                          '">' . t('(protected)') . '</span>';
+  }
 }
 
 /**
