@@ -13,6 +13,8 @@
  * roles</code> permission will be able to select roles for the user from
  * a set of available roles. Roles available are configured by the site
  * administrator.
+ *
+ * @return array
  */
 function roleassign_permission() {
   $perm = user_permission();
@@ -30,6 +32,8 @@ function roleassign_permission() {
  * Implements hook_menu().
  *
  * Adds <code>role assign</code> to <code>Administration » People</code>.
+ *
+ * @return array
  */
 function roleassign_menu() {
   $items = array();
@@ -41,6 +45,7 @@ function roleassign_menu() {
     'file' => 'roleassign.admin.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('roleassign_admin_form'),
+    'access callback' => 'user_access',
     'access arguments' => array('administer permissions'),
   );
 
@@ -51,8 +56,12 @@ function roleassign_menu() {
  * Implements hook_form_alter().
  *
  * Adds checkboxes for assignable roles to the user edit form.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
  */
-function roleassign_form_alter(&$form, &$form_state, $form_id) {
+function roleassign_form_alter(array &$form, array &$form_state, $form_id) {
 
   // Do nothing if the user already has 'administer permissions' permission.
   if (user_access('administer permissions')) {
@@ -83,13 +92,14 @@ function roleassign_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_user_operations().
  *
  * Add or remove roles to selected users.
- * Thanks to hunmonk for the original code.
+ *
+ * @return array|null
  */
 function roleassign_user_operations() {
   // Do nothing if add and remove roles operations already is shown or
   // the user hasn't right to assign roles.
   if (user_access('administer permissions') || !user_access('assign roles')) {
-    return;
+    return NULL;
   }
 
   _roleassign_module_load_include('admin.inc');
@@ -100,6 +110,11 @@ function roleassign_user_operations() {
  * Implements hook_help().
  *
  * Returns various help texts.
+ *
+ * @param string $path
+ * @param $arg
+ *
+ * @return string|null
  */
 function roleassign_help($path = "admin/help#roleassign", $arg) {
   _roleassign_module_load_include('admin.inc');
@@ -108,13 +123,14 @@ function roleassign_help($path = "admin/help#roleassign", $arg) {
 
 /**
  * Helper function to load include files.
+ *
+ * @param string $type
  */
 function _roleassign_module_load_include($type) {
   static $loaded = array();
 
   if (!isset($loaded[$type])) {
-    $path = module_load_include($type, 'roleassign');
-    $loaded[$type] = drupal_get_path('module', 'roleassign') . "/roleassign.$type";
+    $loaded[$type] = (bool) module_load_include($type, 'roleassign');
   }
   return $loaded[$type];
 }

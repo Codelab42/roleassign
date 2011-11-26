@@ -7,14 +7,17 @@
  */
 
 /**
- * Returns a system settings form for the administrator to select which roles
- * will be available to assign for users with the <code>assign roles</code>
- * permission.
+ * Returns a system settings form to administer RoleAssign.
+ *
+ * Allows the administrator to select which roles will be available to assign
+ * for users with the <code>assign roles</code> permission.
+ *
+ * @return array|null
  */
 function roleassign_admin_form() {
   // To admister roleassign, 'administer permissions' permission is required.
   if (!user_access('administer permissions')) {
-    return;
+    return NULL;
   }
 
   // Get all available roles except for 'anonymous user'
@@ -47,19 +50,23 @@ function roleassign_admin_form() {
  * Really implements hook_form_alter().
  *
  * Adds checkboxes for assignable roles to the user edit form.
+ *
+ * @param array $form
+ * @param array $form_state
+ * @param string $form_id
  */
-function _roleassign_form_alter(&$form, &$form_state, $form_id) {
+function _roleassign_form_alter(array &$form, array &$form_state, $form_id) {
   // Get all roles that are available.
   $roles = user_roles(TRUE);
 
   // Get roles that are available for assignment.
   $assignable_roles = _roleassign_assignable_roles($roles);
 
-  // Get roles already assigned to the user.
-  $user = menu_get_object('user');
-  $assigned_roles = (isset($user->roles) ? $user->roles : array());
+  // Get roles already assigned to the account.
+  $account = menu_get_object('user');
+  $assigned_roles = (isset($account->roles) ? $account->roles : array());
 
-  // A user might already have a role that isn't available for assignment
+  // An account might already have a role that isn't available for assignment
   // through this module. Such a role is called "sticky".
   // Get sticky roles.
   $sticky_roles = array_diff($assigned_roles, $assignable_roles);
@@ -101,8 +108,8 @@ function _roleassign_form_alter(&$form, &$form_state, $form_id) {
     $user_form['roleassign_roles'] = $roles_field;
   }
 
-  if (user_access('administer permissions', $user)) {
-    drupal_set_message(t('Some of the fields on this form are locked for this user.'), 'warning');
+  if (user_access('administer permissions', $account) && !user_access('administer permissions')) {
+    drupal_set_message(t('Some of the fields on this form are locked for this user.'), 'warning', FALSE);
     $form['account']['name']['#disabled'] = TRUE;
     $form['account']['mail']['#disabled'] = TRUE;
     $form['account']['pass']['#disabled'] = TRUE;
@@ -111,8 +118,12 @@ function _roleassign_form_alter(&$form, &$form_state, $form_id) {
 
 /**
  * Implements hook_user_presave().
+ *
+ * @param array $edit
+ * @param object $account
+ * @param string $category
  */
-function roleassign_user_presave(&$edit, $account, $category) {
+function roleassign_user_presave(array &$edit, $account, $category) {
   // If this isn't the account category, or there is no roleassign_roles
   // field, there isn't much to do.
   if ($category != 'account' || !isset($edit['roleassign_roles'])) {
@@ -122,8 +133,8 @@ function roleassign_user_presave(&$edit, $account, $category) {
   // If someone is trying to update user's roles, it's a malicious
   // attempt to alter user's roles.
   if (!user_access('assign roles')) {
-    watchdog('security', 'Detected malicious attempt to alter user\'s roles.', array(), WATCHDOG_WARNING);
-    form_set_error('category', t('Detected malicious attempt to alter user\'s roles.'));
+    watchdog('security', "Detected malicious attempt to alter user's roles.", array(), WATCHDOG_WARNING);
+    form_set_error('category', t("Detected malicious attempt to alter user's roles."));
   }
 
   // On submit, copy sticky and assigned roles from 'roleassign_roles'
@@ -137,6 +148,8 @@ function roleassign_user_presave(&$edit, $account, $category) {
  *
  * Add or remove roles to selected users.
  * Thanks to hunmonk for the original code.
+ *
+ * @return array|null
  */
 function _roleassign_user_operations() {
   // Get roles that are available for assignment.
@@ -144,6 +157,7 @@ function _roleassign_user_operations() {
 
   // Build an array of available operations.
   if (count($assignable_roles)) {
+    $add_roles = $remove_roles = array();
     foreach ($assignable_roles as $key => $value) {
       $add_roles['roleassign_add_role-' . $key] = $value;
       $remove_roles['roleassign_remove_role-' . $key] = $value;
@@ -170,8 +184,9 @@ function _roleassign_user_operations() {
     $op = $op[0];
 
     // If not a RoleAssign operation, there is not much to do.
-    if ($op != 'roleassign_add_role' && $op != 'roleassign_remove_role')
-      return;
+    if ($op != 'roleassign_add_role' && $op != 'roleassign_remove_role') {
+      return NULL;
+    }
 
     // If someone is trying to update user's roles, it's a malicious
     // attempt to alter user's roles.
@@ -195,13 +210,21 @@ function _roleassign_user_operations() {
 
 /**
  * Returns assignable roles.
+ *
+ * @param array $roles
+ *
+ * @return array
  */
-function _roleassign_assignable_roles($roles) {
+function _roleassign_assignable_roles(array $roles) {
   return array_intersect_key($roles, array_filter(variable_get('roleassign_roles', array())));
 }
 
 /**
  * Store and retrive sticky roles.
+ *
+ * @param array|null $new_sticky_roles
+ *
+ * @return array
  */
 function _roleassign_sticky_roles($new_sticky_roles = NULL) {
   static $sticky_roles = array();
@@ -215,6 +238,11 @@ function _roleassign_sticky_roles($new_sticky_roles = NULL) {
  * Really implements hook_help().
  *
  * Returns various help texts.
+ *
+ * @param string $path
+ * @param $arg
+ *
+ * @return string|null
  */
 function _roleassign_help($path = "admin/help#roleassign", $arg) {
   $perms = user_permission();
@@ -249,7 +277,7 @@ function _roleassign_help($path = "admin/help#roleassign", $arg) {
   <li>Go to the administration page for role assign and select those roles that should be available for assignment by users with %Assign_roles permission.</li>
   <li>For each user that should be able to assign roles, go to the user\'s account and select a role with both the %Assign_roles and the %Administer_users permissions.</li>
 </ol>
-<p><b>Beware:</b> granting %Administer_users permission to users will allow them to modify admin passwords or email addresses or even delete the site administrator account. The !User_protect module can prevent this.</p>
+<p><strong>Beware:</strong> granting %Administer_users permission to users will allow them to modify admin passwords or email addresses or even delete the site administrator account. The !User_protect module can prevent this.</p>
 <h2>Usage</h2>
 <ol>
   <li>Log in as a user with both the %Assign_roles and the %Administer_users permissions.</li>
@@ -260,4 +288,5 @@ function _roleassign_help($path = "admin/help#roleassign", $arg) {
         '!User_protect' => '<a href="http://drupal.org/project/userprotect">User protect</a>',
       ));
   }
+  return NULL;
 }
