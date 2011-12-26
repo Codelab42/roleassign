@@ -180,7 +180,7 @@ function _roleassign_user_operations() {
   if (isset($_POST['operation']) && $operation = $_POST['operation']) {
     // Get operation and role id.
     $op = explode('-', $operation);
-    $rid = intval($op[1]);
+    $rid = (isset($op[1]) ? intval($op[1]) : NULL);
     $op = $op[0];
 
     // If not a RoleAssign operation, there is not much to do.
