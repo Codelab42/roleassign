@@ -87,6 +87,18 @@ function roleassign_form_alter(array &$form, array &$form_state, $form_id) {
   }
 }
 
+  /**
+   * Implements hook_user_presave().
+   *
+   * @param array $edit
+   * @param object $account
+   * @param string $category
+   */
+function roleassign_user_presave(array &$edit, $account, $category) {
+  _roleassign_module_load_include('admin.inc');
+  return _roleassign_user_presave($edit, $account, $category);
+}
+
 /**
  * Implements hook_user_operations().
  *
