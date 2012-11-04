@@ -56,7 +56,6 @@ function roleassign_admin_form() {
  * @param string $form_id
  */
 function _roleassign_form_alter(array &$form, array &$form_state, $form_id) {
-dpm($form);
   // Get all roles that are available.
   $roles = user_roles(TRUE);
 
@@ -115,7 +114,6 @@ dpm($form);
     $form['account']['mail']['#disabled'] = TRUE;
     $form['account']['pass']['#disabled'] = TRUE;
   }
-  dpm($form);
 }
 
 /**
@@ -126,7 +124,6 @@ dpm($form);
  * @param string $category
  */
 function _roleassign_user_presave(array &$edit, $account, $category) {
-dpm($edit, "_roleassign_user_presave");
   // If this isn't the account category, or there is no roleassign_roles
   // field, there isn't much to do.
   if ($category != 'account' || !isset($edit['roleassign_roles'])) {
