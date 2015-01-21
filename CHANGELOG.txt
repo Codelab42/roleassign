@@ -2,9 +2,12 @@
 CHANGELOG for RoleAssign for Drupal 7
 
 
+roleassign 8.x-1.x-dev:
+  #2405341: Branch to port to D8.
+
+
 roleassign 7.x-1.x-dev:
   #2050711: Update README.txt to clarify the risk posed by the 'administer users' permission.
-
 
 roleassign 7.x-1.0 (2012-11-04):
 
